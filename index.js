@@ -34,11 +34,13 @@ app.get('/api/v1', async (req, res) => {
 
       return rows.map((row) => {
         const kuntaValue = row.querySelector('.kunta').textContent.trim();
-        const pvmdate = row.querySelector('.pvmdate').textContent.trim();
+        const pvmdateElement = row.querySelector('.pvmdate');
+        const pvmdate = pvmdateElement.textContent.trim();
+        const time = pvmdateElement.nextSibling.textContent.trim();
         const typeElement = row.querySelector('td:nth-child(4)');
         const type = typeElement.textContent.trim();
 
-        return { kunta: kuntaValue, pvmdate, type };
+        return { kunta: kuntaValue, pvmdate, time, type };
       });
     });
 
