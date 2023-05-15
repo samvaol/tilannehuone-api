@@ -1,5 +1,5 @@
 # Tilannehuone.fi-Api
-Simppeli Api [tilannehuone.fi](https://tilannehuone.fi), jolla voi hakea tietoja tilannehuoneesta.
+Simppeli Api [tilannehuone.fi:hin](https://tilannehuone.fi), jolla voi hakea tietoja tilannehuoneesta.
 
 Aplikaatio käyttää tähän puppeteeria, koska normaalilla GET pyynnöllä tilannehuoneesta ei tietoja saa.
 
