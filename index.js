@@ -9,16 +9,21 @@ const app = express();
 
 /* 
     * TODO *
-    Älä turhaan sulje puppeteer
+    Älä turhaan sulje puppeteer - DONE
     Lisää filttereitä
 */
 
+let browser;
+
+async function startBrowser() {
+  browser = await puppeteer.launch({ headless: 'new' });
+}
+
+startBrowser();
+
 app.get('/api/v1', async (req, res) => {
   try {
-    // Käynnistä Puppeteer
-    const browser = await puppeteer.launch({ headless: 'new' });
-
-    // Avaa uusi sivu
+    // Avaa uusi sivu puppeteerissä
     const page = await browser.newPage();
 
     // Mene tilannehuoneeseen
@@ -44,8 +49,8 @@ app.get('/api/v1', async (req, res) => {
       });
     });
 
-    // Sulje Puppeteer
-    await browser.close();
+    // Sulje sivu
+    await page.close();
 
     // Tarkitsta jos on kunta filtteri
     if (req.query.kunta) {
@@ -68,6 +73,7 @@ app.get('/api/v1', async (req, res) => {
     res.status(500).send('An error occurred');
   }
 });
+
 
 // Express
 app.listen(3000, () => {
