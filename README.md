@@ -15,3 +15,5 @@ Esimerkkejä Apin käitöstä:
 `localhost:300/api/v1/` - antaa kaikki sivulla olevat tiedot
 
 `localhost:300/api/v1/Helsinki` - antaa Helsingin tiedot
+
+`localhost:3000/api/v1?kunta=Hyvinkää&kunta=Helsinki` - antaa Hyvinkään Ja Helsingin tiedot

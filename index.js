@@ -3,55 +3,61 @@ const puppeteer = require('puppeteer');
 
 const app = express();
 
+/*
+    Copyright © Sampo Syrjämäki 2023
+*/
+
 /* 
     * TODO *
     Älä turhaan sulje puppeteer
     Lisää filttereitä
 */
-app.get('/api/v1/:kunta?', async (req, res) => {
+
+app.get('/api/v1', async (req, res) => {
   try {
     // Käynnistä Puppeteer
     const browser = await puppeteer.launch({ headless: 'new' });
 
-    // Avaa uusi sivu
+    // Uusi sivu
     const page = await browser.newPage();
 
-    // Navigoi tilannehuoneeseen
+    // tilannehuoneeseen
     const url = 'https://www.tilannehuone.fi/halytys.php';
     await page.goto(url);
 
-    // Odota että kama lataa
+    // Odota elementtejä
     await page.waitForSelector('tr.halytys');
 
-    // Scrapee data
-    const data = await page.evaluate((kunta) => {
+    // Scrapee
+    const data = await page.evaluate(() => {
       const rows = Array.from(document.querySelectorAll('tr.halytys'));
 
-      return rows
-        .map((row) => {
-          const kuntaValue = row.querySelector('.kunta').textContent.trim();
-          const pvmdate = row.querySelector('.pvmdate').textContent.trim();
-          const typeElement = row.querySelector('td:nth-child(4)');
-          const type = typeElement.textContent.trim();
+      return rows.map((row) => {
+        const kunta = row.querySelector('.kunta').textContent.trim();
+        const pvmdate = row.querySelector('.pvmdate').textContent.trim();
+        const typeElement = row.querySelector('td:nth-child(4)');
+        const type = typeElement ? typeElement.textContent.trim() : '';
 
-          return { kunta: kuntaValue, pvmdate, type };
-        })
-        .filter((item) => {
-          if (kunta) {
-            const filterValue = kunta.toLowerCase();
+        return { kunta, pvmdate, type };
+      });
+    });
 
-            return item.kunta.toLowerCase() === filterValue;
-          }
-
-          return true;
-        });
-    }, req.params.kunta);
-
-    // Sulje selain
+    // Sulje Puppeteer
     await browser.close();
 
-    // Lähtetä vastaus json muodossa
-    res.json(data);
+    // etsi pyydetyt 'kunta' arvot
+    const requestedKuntas = req.query.kunta || [];
+
+    // Filtteröi
+    const filteredData = data.filter((item) => {
+      if (requestedKuntas.length === 0) {
+        return true; // No filter applied, include all data
+      }
+      return requestedKuntas.includes(item.kunta);
+    });
+
+    // Lähetä JSON muodossa
+    res.json(filteredData);
   } catch (error) {
     console.error('Error occurred while scraping:', error);
     res.status(500).send('An error occurred');
