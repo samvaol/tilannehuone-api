@@ -18,46 +18,49 @@ app.get('/api/v1', async (req, res) => {
     // Käynnistä Puppeteer
     const browser = await puppeteer.launch({ headless: 'new' });
 
-    // Uusi sivu
+    // Avaa uusi sivu
     const page = await browser.newPage();
 
-    // tilannehuoneeseen
+    // Mene tilannehuoneeseen
     const url = 'https://www.tilannehuone.fi/halytys.php';
     await page.goto(url);
 
     // Odota elementtejä
     await page.waitForSelector('tr.halytys');
 
-    // Scrapee
+    // Scrapee data
     const data = await page.evaluate(() => {
       const rows = Array.from(document.querySelectorAll('tr.halytys'));
 
       return rows.map((row) => {
-        const kunta = row.querySelector('.kunta').textContent.trim();
+        const kuntaValue = row.querySelector('.kunta').textContent.trim();
         const pvmdate = row.querySelector('.pvmdate').textContent.trim();
         const typeElement = row.querySelector('td:nth-child(4)');
-        const type = typeElement ? typeElement.textContent.trim() : '';
+        const type = typeElement.textContent.trim();
 
-        return { kunta, pvmdate, type };
+        return { kunta: kuntaValue, pvmdate, type };
       });
     });
 
     // Sulje Puppeteer
     await browser.close();
 
-    // etsi pyydetyt 'kunta' arvot
-    const requestedKuntas = req.query.kunta || [];
+    // Tarkitsta jos on kunta filtteri
+    if (req.query.kunta) {
+      const kuntaValues = Array.isArray(req.query.kunta)
+        ? req.query.kunta.map((k) => k.toLowerCase())
+        : [req.query.kunta.toLowerCase()];
 
-    // Filtteröi
-    const filteredData = data.filter((item) => {
-      if (requestedKuntas.length === 0) {
-        return true; // No filter applied, include all data
-      }
-      return requestedKuntas.includes(item.kunta);
-    });
+      const filteredData = data.filter((item) =>
+        kuntaValues.includes(item.kunta.toLowerCase())
+      );
 
-    // Lähetä JSON muodossa
-    res.json(filteredData);
+      // Filtteröity data JSON mudossa
+      res.json(filteredData);
+    } else {
+      // Lähetä tiedot JSON muodossa
+      res.json(data);
+    }
   } catch (error) {
     console.error('Error occurred while scraping:', error);
     res.status(500).send('An error occurred');
