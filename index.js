@@ -49,8 +49,8 @@ app.get('/api/v1', async (req, res) => {
       });
     });
 
-    // Sulje sivu
-    await page.close();
+    // Päivitä sivu
+    await page.reload();
 
     // Tarkitsta jos on kunta filtteri
     if (req.query.kunta) {
