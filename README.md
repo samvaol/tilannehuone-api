@@ -7,6 +7,6 @@ Aplikaatio käyttää tähän puppeteeria, koska normaalilla GET pyynnöllä til
 1. Ensin aja `npm install`
 2. sitten `node index.js`
 3. seuraavana palvelin käynnistyy `lcoalhost:300`
-4. Esimerkkejä Apin käitöstä:
+Esimerkkejä Apin käitöstä:
 `localhost:300/api/v1/` - antaa kaikki sivulla olevat tiedot
 `localhost:300/api/v1/Helsinki` - antaa Helsingin tiedot
