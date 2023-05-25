@@ -1,7 +1,7 @@
 # Tilannehuone.fi-Api
 Simppeli Api [tilannehuone.fi:hin](https://tilannehuone.fi), jolla voi hakea tietoja tilannehuoneesta.
 
-Aplikaatio käyttää tähän puppeteeria, koska normaalilla GET pyynnöllä tilannehuoneesta ei tietoja saa.
+Aplikaatio käyttää tähän puppeteeria, koska normaalilla get pyynnöllä tilannehuoneesta ei tietoja saa.
 
 ### Käyttö
 1. Ensin aja `npm install`
